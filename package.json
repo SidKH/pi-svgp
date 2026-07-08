@@ -1,13 +1,24 @@
 {
   "name": "pi-svgp",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Live SVG preview extension for pi",
   "type": "commonjs",
   "license": "ISC",
-  "keywords": ["pi-package", "pi-extension", "svg", "preview"],
-  "files": ["index.ts", "README.md", "LICENSE"],
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "svg",
+    "preview"
+  ],
+  "files": [
+    "index.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "pi": {
-    "extensions": ["./index.ts"]
+    "extensions": [
+      "./index.ts"
+    ]
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2"
