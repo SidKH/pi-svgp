@@ -136,12 +136,17 @@ class LiveSvgPreview implements Component {
       });
       const pngBase64 = Buffer.from(resvg.render().asPng()).toString("base64");
       const imageId = this.image?.getImageId();
-      this.image = new Image(pngBase64, "image/png", this.theme, {
-        maxWidthCells: this.maxWidthCells,
-        maxHeightCells: this.maxHeightCells,
-        filename: this.displayPath,
-        imageId,
-      });
+      this.image = new Image(
+        pngBase64,
+        "image/png",
+        { fallbackColor: (text) => this.theme.fg("muted", text) },
+        {
+          maxWidthCells: this.maxWidthCells,
+          maxHeightCells: this.maxHeightCells,
+          filename: this.displayPath,
+          imageId,
+        },
+      );
       this.error = undefined;
       this.status = `updated ${new Date().toLocaleTimeString()}`;
     } catch (error) {
