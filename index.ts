@@ -24,6 +24,7 @@ class LiveSvgPreview implements Component {
   private image?: Image;
   private watcher?: FSWatcher;
   private debounceTimer?: ReturnType<typeof setTimeout>;
+  private refreshController?: AbortController;
   private disposed = false;
   private status = "loading";
 
@@ -61,6 +62,7 @@ class LiveSvgPreview implements Component {
   dispose(): void {
     this.disposed = true;
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
+    this.refreshController?.abort();
     this.watcher?.close();
   }
 
@@ -100,11 +102,16 @@ class LiveSvgPreview implements Component {
   }
 
   async refresh(): Promise<void> {
+    this.refreshController?.abort();
+    const controller = new AbortController();
+    this.refreshController = controller;
+
     try {
       this.status = "Rendering…";
       this.requestRender();
-      const svg = await readFile(this.absolutePath);
-      if (this.disposed) return;
+      const svg = await readFile(this.absolutePath, {
+        signal: controller.signal,
+      });
 
       const resvg = new Resvg(svg, {
         fitTo: { mode: "width", value: Math.max(1, this.maxWidthCells * 12) },
@@ -118,10 +125,14 @@ class LiveSvgPreview implements Component {
       this.error = undefined;
       this.status = `updated ${new Date().toLocaleTimeString()}`;
     } catch (error) {
+      if (controller.signal.aborted) return;
       this.error = error instanceof Error ? error.message : String(error);
       this.status = "render failed";
     } finally {
-      if (!this.disposed) this.requestRender();
+      if (this.refreshController === controller) {
+        this.refreshController = undefined;
+        if (!this.disposed) this.requestRender();
+      }
     }
   }
 
