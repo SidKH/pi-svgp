@@ -13,16 +13,6 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-function parsePathArg(args: string): string | undefined {
-  const trimmed = args.trim();
-  if (!trimmed) return undefined;
-  const quote = trimmed[0];
-  if ((quote === '"' || quote === "'") && trimmed.endsWith(quote)) {
-    return trimmed.slice(1, -1);
-  }
-  return trimmed;
-}
-
 interface LiveSvgPreviewOptions {
   displayPath: string;
   absolutePath: string;
@@ -200,7 +190,7 @@ export default function (pi: ExtensionAPI) {
         return;
       }
 
-      const inputPath = parsePathArg(args);
+      const inputPath = args.trim();
       if (!inputPath) {
         ctx.ui.notify("Usage: /svgp path/to/file.svg", "warning");
         return;
