@@ -40,6 +40,19 @@ vi.mock("@earendil-works/pi-coding-agent", async (importOriginal) => {
   return { ...actual, copyToClipboard: fakes.copyToClipboard };
 });
 
+vi.mock("@resvg/resvg-js", () => ({
+  Resvg: class {
+    constructor(svg: Uint8Array) {
+      if (!Buffer.from(svg).toString("utf8").trimStart().startsWith("<svg")) {
+        throw new Error("Invalid SVG");
+      }
+    }
+    render() {
+      return { asPng: () => new Uint8Array([137, 80, 78, 71]) };
+    }
+  },
+}));
+
 vi.mock("@earendil-works/pi-tui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@earendil-works/pi-tui")>();
   return {
