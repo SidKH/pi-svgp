@@ -9,6 +9,10 @@ import { readFile } from "node:fs/promises";
 import { basename, dirname, resolve } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 function parsePathArg(args: string): string | undefined {
   const trimmed = args.trim();
   if (!trimmed) return undefined;
@@ -116,7 +120,7 @@ class LiveSvgPreview implements Component {
 
   private handleWatchError(error: unknown): void {
     if (this.disposed) return;
-    this.error = `watch failed: ${error instanceof Error ? error.message : String(error)}`;
+    this.error = `watch failed: ${getErrorMessage(error)}`;
     this.status = "watch failed";
     this.watcher?.close();
     this.watcher = undefined;
@@ -155,7 +159,7 @@ class LiveSvgPreview implements Component {
       this.status = `updated ${new Date().toLocaleTimeString()}`;
     } catch (error) {
       if (controller.signal.aborted) return;
-      this.error = error instanceof Error ? error.message : String(error);
+      this.error = getErrorMessage(error);
       this.status = "render failed";
     } finally {
       if (this.refreshController === controller) {
@@ -171,7 +175,7 @@ class LiveSvgPreview implements Component {
       this.notify(`Copied SVG: ${this.displayPath}`, "info");
     } catch (error) {
       this.notify(
-        `Failed to copy SVG: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to copy SVG: ${getErrorMessage(error)}`,
         "error",
       );
     }
