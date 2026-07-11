@@ -19,7 +19,28 @@ function parsePathArg(args: string): string | undefined {
   return trimmed;
 }
 
+interface LiveSvgPreviewOptions {
+  displayPath: string;
+  absolutePath: string;
+  maxWidthCells: number;
+  maxHeightCells: number;
+  theme: Theme;
+  requestRender: () => void;
+  notify: (
+    message: string,
+    type?: "info" | "warning" | "error",
+  ) => void;
+}
+
 class LiveSvgPreview implements Component {
+  private readonly displayPath: string;
+  private readonly absolutePath: string;
+  private readonly maxWidthCells: number;
+  private readonly maxHeightCells: number;
+  private readonly theme: Theme;
+  private readonly requestRender: () => void;
+  private readonly notify: LiveSvgPreviewOptions["notify"];
+
   private error?: string;
   private image?: Image;
   private watcher?: FSWatcher;
@@ -28,18 +49,15 @@ class LiveSvgPreview implements Component {
   private disposed = false;
   private status = "loading";
 
-  constructor(
-    private readonly displayPath: string,
-    private readonly absolutePath: string,
-    private readonly maxWidthCells: number,
-    private readonly maxHeightCells: number,
-    private readonly theme: Theme,
-    private readonly requestRender: () => void,
-    private readonly notify: (
-      message: string,
-      type?: "info" | "warning" | "error",
-    ) => void,
-  ) {}
+  constructor(options: LiveSvgPreviewOptions) {
+    this.displayPath = options.displayPath;
+    this.absolutePath = options.absolutePath;
+    this.maxWidthCells = options.maxWidthCells;
+    this.maxHeightCells = options.maxHeightCells;
+    this.theme = options.theme;
+    this.requestRender = options.requestRender;
+    this.notify = options.notify;
+  }
 
   start(): void {
     void this.refresh();
@@ -189,15 +207,15 @@ export default function (pi: ExtensionAPI) {
       ctx.ui.setWidget(
         "svgp",
         (tui, theme) => {
-          const panel = new LiveSvgPreview(
-            inputPath,
+          const panel = new LiveSvgPreview({
+            displayPath: inputPath,
             absolutePath,
-            80,
-            10,
+            maxWidthCells: 80,
+            maxHeightCells: 10,
             theme,
-            () => tui.requestRender(),
-            (message, type) => ctx.ui.notify(message, type),
-          );
+            requestRender: () => tui.requestRender(),
+            notify: (message, type) => ctx.ui.notify(message, type),
+          });
           currentPreview = panel;
           panel.start();
           return panel;
