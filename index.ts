@@ -53,9 +53,9 @@ class LiveSvgPreview implements Component {
           if (!filename || filename.toString() === file) this.scheduleRefresh();
         },
       );
+      this.watcher.on("error", (error) => this.handleWatchError(error));
     } catch (error) {
-      this.error = `watch failed: ${error instanceof Error ? error.message : String(error)}`;
-      this.status = "watch failed";
+      this.handleWatchError(error);
     }
   }
 
@@ -94,6 +94,15 @@ class LiveSvgPreview implements Component {
     lines.push(truncateToWidth(help, width));
     if (!this.error && this.image) lines.push("");
     return lines;
+  }
+
+  private handleWatchError(error: unknown): void {
+    if (this.disposed) return;
+    this.error = `watch failed: ${error instanceof Error ? error.message : String(error)}`;
+    this.status = "watch failed";
+    this.watcher?.close();
+    this.watcher = undefined;
+    this.requestRender();
   }
 
   private scheduleRefresh(): void {
