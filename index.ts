@@ -9,7 +9,7 @@ import { readFile } from "node:fs/promises";
 import { basename, dirname, resolve } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 
-function getErrorMessage(error: unknown): string {
+function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error);
 }
 
@@ -20,10 +20,7 @@ interface LiveSvgPreviewOptions {
   maxHeightCells: number;
   theme: Theme;
   requestRender: () => void;
-  notify: (
-    message: string,
-    type?: "info" | "warning" | "error",
-  ) => void;
+  notify: (message: string, type?: "info" | "warning" | "error") => void;
 }
 
 class LiveSvgPreview implements Component {
@@ -53,7 +50,7 @@ class LiveSvgPreview implements Component {
     this.notify = options.notify;
   }
 
-  start(): void {
+  start() {
     void this.refresh();
     try {
       const dir = dirname(this.absolutePath);
@@ -71,14 +68,14 @@ class LiveSvgPreview implements Component {
     }
   }
 
-  dispose(): void {
+  dispose() {
     this.disposed = true;
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     this.refreshController?.abort();
     this.watcher?.close();
   }
 
-  invalidate(): void {
+  invalidate() {
     this.image?.invalidate();
   }
 
@@ -108,7 +105,7 @@ class LiveSvgPreview implements Component {
     return lines;
   }
 
-  private handleWatchError(error: unknown): void {
+  private handleWatchError(error: unknown) {
     if (this.disposed) return;
     this.error = `watch failed: ${getErrorMessage(error)}`;
     this.status = "watch failed";
@@ -117,12 +114,12 @@ class LiveSvgPreview implements Component {
     this.requestRender();
   }
 
-  private scheduleRefresh(): void {
+  private scheduleRefresh() {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => void this.refresh(), 100);
   }
 
-  async refresh(): Promise<void> {
+  async refresh() {
     this.refreshController?.abort();
     const controller = new AbortController();
     this.refreshController = controller;
@@ -159,15 +156,12 @@ class LiveSvgPreview implements Component {
     }
   }
 
-  async copySvg(): Promise<void> {
+  async copySvg() {
     try {
       await copyToClipboard(await readFile(this.absolutePath, "utf8"));
       this.notify(`Copied SVG: ${this.displayPath}`, "info");
     } catch (error) {
-      this.notify(
-        `Failed to copy SVG: ${getErrorMessage(error)}`,
-        "error",
-      );
+      this.notify(`Failed to copy SVG: ${getErrorMessage(error)}`, "error");
     }
   }
 }
@@ -175,7 +169,7 @@ class LiveSvgPreview implements Component {
 export default function (pi: ExtensionAPI) {
   let currentPreview: LiveSvgPreview | undefined;
 
-  function disposeCurrentPreview(): void {
+  function disposeCurrentPreview() {
     currentPreview?.dispose();
     currentPreview = undefined;
   }
