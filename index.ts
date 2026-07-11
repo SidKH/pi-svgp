@@ -83,23 +83,14 @@ class LiveSvgPreview implements Component {
       lines.push(
         truncateToWidth(this.theme.fg("error", `Error: ${this.error}`), width),
       );
-      lines.push(truncateToWidth(help, width));
-      return lines;
+    } else if (this.image) {
+      lines.push("");
+      lines.push(...this.image.render(width));
+      lines.push("");
     }
 
-    if (!this.image) {
-      lines.push(
-        truncateToWidth(this.theme.fg("warning", "Rendering…"), width),
-      );
-      lines.push(truncateToWidth(help, width));
-      return lines;
-    }
-
-    lines.push("");
-    lines.push(...this.image.render(width));
-    lines.push("");
     lines.push(truncateToWidth(help, width));
-    lines.push("");
+    if (!this.error && this.image) lines.push("");
     return lines;
   }
 
@@ -110,7 +101,7 @@ class LiveSvgPreview implements Component {
 
   async refresh(): Promise<void> {
     try {
-      this.status = "rendering…";
+      this.status = "Rendering…";
       this.requestRender();
       const svg = await readFile(this.absolutePath);
       if (this.disposed) return;
