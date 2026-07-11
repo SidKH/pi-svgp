@@ -126,10 +126,12 @@ class LiveSvgPreview implements Component {
         fitTo: { mode: "width", value: Math.max(1, this.maxWidthCells * 12) },
       });
       const pngBase64 = Buffer.from(resvg.render().asPng()).toString("base64");
+      const imageId = this.image?.getImageId();
       this.image = new Image(pngBase64, "image/png", this.theme, {
         maxWidthCells: this.maxWidthCells,
         maxHeightCells: this.maxHeightCells,
         filename: this.displayPath,
+        imageId,
       });
       this.error = undefined;
       this.status = `updated ${new Date().toLocaleTimeString()}`;
