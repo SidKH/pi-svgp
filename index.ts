@@ -160,14 +160,14 @@ class LiveSvgPreview implements Component {
   }
 }
 
-let currentPreview: LiveSvgPreview | undefined;
-
-function disposeCurrentPreview(): void {
-  currentPreview?.dispose();
-  currentPreview = undefined;
-}
-
 export default function (pi: ExtensionAPI) {
+  let currentPreview: LiveSvgPreview | undefined;
+
+  function disposeCurrentPreview(): void {
+    currentPreview?.dispose();
+    currentPreview = undefined;
+  }
+
   pi.on("session_shutdown", disposeCurrentPreview);
 
   pi.registerCommand("svgp", {
