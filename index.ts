@@ -162,11 +162,13 @@ class LiveSvgPreview implements Component {
 
 let currentPreview: LiveSvgPreview | undefined;
 
+function disposeCurrentPreview(): void {
+  currentPreview?.dispose();
+  currentPreview = undefined;
+}
+
 export default function (pi: ExtensionAPI) {
-  pi.on("session_shutdown", () => {
-    currentPreview?.dispose();
-    currentPreview = undefined;
-  });
+  pi.on("session_shutdown", disposeCurrentPreview);
 
   pi.registerCommand("svgp", {
     description: "Show a live SVG preview widget",
@@ -183,8 +185,7 @@ export default function (pi: ExtensionAPI) {
       }
 
       const absolutePath = resolve(ctx.cwd, inputPath);
-      currentPreview?.dispose();
-      currentPreview = undefined;
+      disposeCurrentPreview();
       ctx.ui.setWidget(
         "svgp",
         (tui, theme) => {
@@ -210,8 +211,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("svgp-close", {
     description: "Close the live SVG preview widget",
     handler: async (_args, ctx) => {
-      currentPreview?.dispose();
-      currentPreview = undefined;
+      disposeCurrentPreview();
       ctx.ui.setWidget("svgp", undefined);
     },
   });
