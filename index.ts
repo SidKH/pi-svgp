@@ -9,7 +9,7 @@ import { readFile } from "node:fs/promises";
 import { basename, dirname, resolve } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 
-function getErrorMessage(error: unknown) {
+function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
@@ -50,7 +50,7 @@ class LiveSvgPreview implements Component {
     this.notify = options.notify;
   }
 
-  start() {
+  start(): void {
     void this.refresh();
     try {
       const dir = dirname(this.absolutePath);
@@ -68,14 +68,14 @@ class LiveSvgPreview implements Component {
     }
   }
 
-  dispose() {
+  dispose(): void {
     this.disposed = true;
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     this.refreshController?.abort();
     this.watcher?.close();
   }
 
-  invalidate() {
+  invalidate(): void {
     this.image?.invalidate();
   }
 
@@ -105,7 +105,7 @@ class LiveSvgPreview implements Component {
     return lines;
   }
 
-  private handleWatchError(error: unknown) {
+  private handleWatchError(error: unknown): void {
     if (this.disposed) return;
     this.error = `watch failed: ${getErrorMessage(error)}`;
     this.status = "watch failed";
@@ -114,12 +114,12 @@ class LiveSvgPreview implements Component {
     this.requestRender();
   }
 
-  private scheduleRefresh() {
+  private scheduleRefresh(): void {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => void this.refresh(), 100);
   }
 
-  async refresh() {
+  async refresh(): Promise<void> {
     this.refreshController?.abort();
     const controller = new AbortController();
     this.refreshController = controller;
@@ -161,7 +161,7 @@ class LiveSvgPreview implements Component {
     }
   }
 
-  async copySvg() {
+  async copySvg(): Promise<void> {
     try {
       await copyToClipboard(await readFile(this.absolutePath, "utf8"));
       this.notify(`Copied SVG: ${this.displayPath}`, "info");
@@ -171,10 +171,10 @@ class LiveSvgPreview implements Component {
   }
 }
 
-export default function (pi: ExtensionAPI) {
+export default function (pi: ExtensionAPI): void {
   let currentPreview: LiveSvgPreview | undefined;
 
-  function disposeCurrentPreview() {
+  function disposeCurrentPreview(): void {
     currentPreview?.dispose();
     currentPreview = undefined;
   }
