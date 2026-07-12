@@ -1,12 +1,12 @@
 # pi-svgp
 
-Live SVG preview extension for Pi
+Live SVG preview extension for Pi.
 
 https://github.com/user-attachments/assets/2d3b586e-bb2c-413f-adcc-4217ae1f44ae
 
 ## How it works
 
-Extension converts a given SVG to PNG with [@resvg/resvg-js](https://github.com/thx/resvg-js) and renders it as a TUI widget below the editor
+It converts a given SVG to PNG using [@resvg/resvg-js](https://github.com/thx/resvg-js) and renders it as a TUI widget below the editor + watches for file changes.
 
 ## Install
 
