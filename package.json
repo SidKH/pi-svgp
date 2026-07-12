@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Live SVG preview extension for pi",
   "type": "commonjs",
-  "license": "ISC",
+  "license": "MIT",
   "keywords": [
     "pi-package",
     "pi-extension",
