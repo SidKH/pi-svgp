@@ -2,8 +2,17 @@
   "name": "pi-svgp",
   "version": "0.1.0",
   "description": "Live SVG preview extension for pi",
-  "type": "commonjs",
+  "author": "Alex Sidorenko",
   "license": "MIT",
+  "homepage": "https://github.com/SidKH/pi-svgp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SidKH/pi-svgp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SidKH/pi-svgp/issues"
+  },
+  "type": "commonjs",
   "keywords": [
     "pi-package",
     "pi-extension",
