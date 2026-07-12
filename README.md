@@ -2,13 +2,7 @@
 
 Live SVG preview extension for pi's TUI.
 
-
-
-https://github.com/user-attachments/assets/a8db9b44-0488-4c53-9b89-4d4ef1d567ae
-
-
-
-
+https://github.com/user-attachments/assets/2d3b586e-bb2c-413f-adcc-4217ae1f44ae
 
 ## Install
 
