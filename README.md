@@ -2,6 +2,10 @@
 
 Live SVG preview extension for pi's TUI.
 
+https://github.com/user-attachments/assets/3fd56475-3cc2-4ac3-9c7e-dfdcb237bd7d
+
+
+
 ## Install
 
 ```bash
